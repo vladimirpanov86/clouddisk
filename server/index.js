@@ -2,9 +2,19 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const config = require('config')
 const db = require('./db_actions')
+const authRouter = require('./routes/auth.routes')
 const app = express()
 const PORT = config.get('serverPort')
 const Users = require('./models/Users')
+
+app.use(bodyParser.json())
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+)
+
+app.use('/api/auth', authRouter)
 
 const start = () => {
   try {
@@ -17,12 +27,7 @@ const start = () => {
   }
 }
 
-app.use(bodyParser.json())
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-)
+
 
 db.authenticate()
   .catch(error => console.error(error))
@@ -61,8 +66,5 @@ app.get('/users', async (request, response) => {
     })
   }
 })
-
-// app.get('/users', db.getUsers);
-
 
 start()
